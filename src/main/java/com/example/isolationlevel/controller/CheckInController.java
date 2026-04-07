@@ -7,7 +7,6 @@ import com.example.isolationlevel.entity.Stock;
 import com.example.isolationlevel.repository.CheckInRepository;
 import com.example.isolationlevel.repository.ReservationRepository;
 import com.example.isolationlevel.repository.StockRepository;
-import com.example.isolationlevel.service.EntityUpdateCheckInService;
 import com.example.isolationlevel.service.ReadCommittedCheckInService;
 import com.example.isolationlevel.service.RepeatableReadCheckInService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,6 @@ public class CheckInController {
     private final CheckInRepository checkInRepository;
     private final RepeatableReadCheckInService repeatableReadCheckInService;
     private final ReadCommittedCheckInService readCommittedCheckInService;
-    private final EntityUpdateCheckInService entityUpdateCheckInService;
     private final DataInitializer dataInitializer;
 
     // ==================== 데이터 설정 ====================
@@ -131,14 +129,6 @@ public class CheckInController {
         return executeConcurrentCheckIn(reservationIds, 120, "READ_COMMITTED");
     }
 
-    @Tag(name = "3. 동시 체크인 테스트")
-    @Operation(summary = "REPEATABLE_READ + Entity방식 동시 체크인 - 성공 예상")
-    @PostMapping("/checkin/repeatable-read-entity/concurrent")
-    public ResponseEntity<Map<String, Object>> concurrentCheckInRepeatableReadEntity() {
-        List<Long> reservationIds = getReservedIds(100);
-        return executeConcurrentCheckIn(reservationIds, 120, "REPEATABLE_READ_ENTITY");
-    }
-
     private List<Long> getReservedIds(int count) {
         return reservationRepository.findByStatus(Reservation.ReservationStatus.RESERVED)
                 .stream()
@@ -172,8 +162,6 @@ public class CheckInController {
 
                     if ("REPEATABLE_READ".equals(isolationLevel)) {
                         checkIn = repeatableReadCheckInService.processCheckIn(reservationId);
-                    } else if ("REPEATABLE_READ_ENTITY".equals(isolationLevel)) {
-                        checkIn = entityUpdateCheckInService.processCheckIn(reservationId);
                     } else {
                         checkIn = readCommittedCheckInService.processCheckIn(reservationId);
                     }
