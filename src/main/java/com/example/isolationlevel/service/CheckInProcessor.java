@@ -54,7 +54,7 @@ public class CheckInProcessor {
 
         log.info("[{}][{}] {}일치 재고 조회됨", isolationLevel, threadName, stocks.size());
 
-        // 3. 재고 UPDATE (직접 쿼리)
+        // 3. 재고 UPDATE (범위 쿼리)
         log.info("[{}][{}] 3. 재고 UPDATE 실행", isolationLevel, threadName);
         int updatedCount = stockRepository.updateCheckIn(
                 reservation.getBranch(),

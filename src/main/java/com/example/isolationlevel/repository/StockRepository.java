@@ -24,7 +24,7 @@ public interface StockRepository extends JpaRepository<Stock, StockId> {
             @Param("endDate") LocalDate endDate);
 
     /**
-     * 날짜 범위로 재고 UPDATE (직접 쿼리)
+     * 날짜 범위로 재고 UPDATE (범위 쿼리)
      * reserved -1, checkedIn +1
      */
     @Modifying
@@ -38,7 +38,7 @@ public interface StockRepository extends JpaRepository<Stock, StockId> {
             @Param("endDate") LocalDate endDate);
 
     /**
-     * reserved 값 직접 설정 (Non-Repeatable Read 테스트용)
+     * reserved 값 범위 설정 (Non-Repeatable Read 테스트용)
      */
     @Modifying
     @Query("UPDATE Stock s SET s.reserved = :newReserved " +

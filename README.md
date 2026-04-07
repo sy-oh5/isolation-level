@@ -64,10 +64,10 @@ docker run -d \
 
 ### 3. 동시 체크인 테스트 (100건)
 
-| API | 설명 |
-|-----|------|
-| `POST /api/checkin/repeatable-read/concurrent` | REPEATABLE_READ + 직접 UPDATE (Gap Lock 발생) |
-| `POST /api/checkin/read-committed/concurrent` | READ_COMMITTED + 직접 UPDATE (Gap Lock 없음) |
+| API | 설명                                                   |
+|-----|------------------------------------------------------|
+| `POST /api/checkin/repeatable-read/concurrent` | REPEATABLE_READ + 범위 UPDATE (Gap Lock 발생)            |
+| `POST /api/checkin/read-committed/concurrent` | READ_COMMITTED + 범위 UPDATE (Gap Lock 없음)             |
 | `POST /api/checkin/repeatable-read-entity/concurrent` | REPEATABLE_READ + Entity UPDATE (PK 기준, Gap Lock 없음) |
 
 ### 4. Isolation Level 테스트
@@ -83,10 +83,10 @@ docker run -d \
 
 ### 동시 체크인 (100건)
 
-| Isolation Level | 성공 | 실패 | 총 시간 |
-|-----------------|------|------|---------|
-| **REPEATABLE_READ** (직접 UPDATE) | 77 | 23 | 12,430ms |
-| **READ_COMMITTED** (직접 UPDATE) | 100 | 0 | 3,439ms |
+| Isolation Level                 | 성공 | 실패 | 총 시간 |
+|---------------------------------|------|------|---------|
+| **REPEATABLE_READ** (범위 UPDATE) | 77 | 23 | 12,430ms |
+| **READ_COMMITTED** (범위 UPDATE)  | 100 | 0 | 3,439ms |
 
 ### REPEATABLE_READ (Gap Lock 발생)
 
@@ -160,10 +160,10 @@ WHERE date >= '2024-04-07' AND date < '2024-04-10'
 
 ### UPDATE 방식에 따른 차이
 
-| 방식 | 쿼리 | Gap Lock |
-|------|------|----------|
-| 직접 UPDATE (범위) | `WHERE date >= ? AND date < ?` | O |
-| Entity UPDATE (PK) | `WHERE branch=? AND room_type=? AND date=?` | X |
+| 방식                     | 쿼리 | Gap Lock |
+|------------------------|------|----------|
+| 범위 UPDATE (range scan) | `WHERE date >= ? AND date < ?` | O |
+| Entity UPDATE (PK)     | `WHERE branch=? AND room_type=? AND date=?` | X |
 
 ### 4가지 Isolation Level 비교
 

@@ -91,7 +91,7 @@ public class NonRepeatableReadTestService {
 
     /**
      * 별도 트랜잭션에서 UPDATE 실행 (트랜잭션 B 역할)
-     * 직접 UPDATE 쿼리 사용 → 즉시 반영
+     * 범위 UPDATE 쿼리 사용 → 즉시 반영
      */
     @Transactional
     public void updateStockInSeparateTransaction(int newReserved) {
