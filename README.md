@@ -19,19 +19,6 @@ MySQL Isolation Level에 따른 동시성 차이를 테스트하는 프로젝트
 
 ---
 
-## Docker MySQL 실행
-
-```bash
-docker run -d \
-  --name mysql-isolation \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=isolation_test \
-  -p 3306:3306 \
-  mysql:8.0
-```
-
----
-
 ## 초기 데이터
 
 앱 실행 시 자동 생성:
@@ -84,8 +71,8 @@ docker run -d \
 
 | Isolation Level                 | 성공 | 실패 | 총 시간 |
 |---------------------------------|------|------|---------|
-| **REPEATABLE_READ** (범위 UPDATE) | 77 | 23 | 12,430ms |
-| **READ_COMMITTED** (범위 UPDATE)  | 100 | 0 | 3,439ms |
+| **REPEATABLE_READ** | 77 | 23 | 12,430ms |
+| **READ_COMMITTED**  | 100 | 0 | 3,439ms |
 
 ### REPEATABLE_READ (Gap Lock 발생)
 
