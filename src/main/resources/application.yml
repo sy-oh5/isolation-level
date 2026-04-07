@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: isolation-level
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/isolation_test
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-init-sql: SET innodb_lock_wait_timeout = 1
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
