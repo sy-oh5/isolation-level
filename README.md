@@ -218,3 +218,29 @@ REPEATABLE_READ + clear()
 - **DB가 뭘 반환하느냐**는 isolation level에 따라 다름
   - READ_COMMITTED: 최신 커밋된 값
   - REPEATABLE_READ: 트랜잭션 시작 시점의 snapshot
+
+---
+
+## 한계
+
+READ_COMMITTED로 Gap Lock 문제를 해결했더라도, **트래픽이 더 많아지면** 여전히 Lock wait timeout이 발생할 수 있습니다.
+
+- Gap Lock은 제거되었지만, **Row Lock은 여전히 존재**
+- 같은 row를 동시에 UPDATE하는 요청이 많아지면 대기 발생
+- `innodb_lock_wait_timeout` 내에 락을 획득하지 못하면 타임아웃
+
+### 추가 해결 방안
+
+| 방안 | 설명 |
+|------|------|
+| **DB 스케일 업** | CPU/메모리 증설로 처리량 향상 |
+| **innodb_lock_wait_timeout 조정** | 대기 시간 늘리기 (단, 사용자 경험 저하) |
+| **재시도 로직 (Retry)** | 타임아웃 시 일정 횟수 재시도 |
+| **분산 락 (Redis)** | DB 락 의존도 낮추기 |
+| **큐 기반 처리** | 동시 요청을 순차 처리로 전환 |
+| **샤딩/파티셔닝** | 데이터 분산으로 락 경합 감소 |
+
+### 결론
+
+> Isolation Level 조정은 **동시성 문제 해결의 첫 번째 단계**이며,
+> 트래픽 규모에 따라 추가적인 아키텍처 개선이 필요할 수 있음
